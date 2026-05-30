@@ -2,6 +2,7 @@ using Microsoft.Extensions.Options;
 using PremierLeagueSquadExplorer.Api.Clients;
 using PremierLeagueSquadExplorer.Api.Constants;
 using PremierLeagueSquadExplorer.Api.Options;
+using PremierLeagueSquadExplorer.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,9 @@ builder.Services.AddHttpClient<IFootballApiClient, FootballApiClient>((servicePr
     httpClient.BaseAddress = new Uri(options.BaseUrl);
     httpClient.DefaultRequestHeaders.Add(FootballApiHeaders.ApiKey, options.ApiKey);
 });
+
+builder.Services.AddSingleton<ITeamAliasProvider, JsonTeamAliasProvider>();
+builder.Services.AddScoped<ITeamResolverService, TeamResolverService>();
 
 var app = builder.Build();
 

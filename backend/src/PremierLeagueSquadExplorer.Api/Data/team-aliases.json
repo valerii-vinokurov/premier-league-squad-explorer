@@ -1,0 +1,102 @@
+[
+  {
+    "officialName": "Arsenal",
+    "providerName": "Arsenal",
+    "aliases": [ "The Gunners", "Gunners" ]
+  },
+  {
+    "officialName": "Aston Villa",
+    "providerName": "Aston Villa",
+    "aliases": [ "The Villans", "Villans" ]
+  },
+  {
+    "officialName": "AFC Bournemouth",
+    "providerName": "Bournemouth",
+    "aliases": [ "Bournemouth", "The Cherries", "Cherries" ]
+  },
+  {
+    "officialName": "Brentford",
+    "providerName": "Brentford",
+    "aliases": [ "The Bees", "Bees" ]
+  },
+  {
+    "officialName": "Brighton & Hove Albion",
+    "providerName": "Brighton",
+    "aliases": [ "Brighton", "Brighton and Hove Albion", "The Seagulls", "Seagulls" ]
+  },
+  {
+    "officialName": "Chelsea",
+    "providerName": "Chelsea",
+    "aliases": [ "Chelsea FC", "The Blues" ]
+  },
+  {
+    "officialName": "Crystal Palace",
+    "providerName": "Crystal Palace",
+    "aliases": [ "The Eagles", "Eagles" ]
+  },
+  {
+    "officialName": "Everton",
+    "providerName": "Everton",
+    "aliases": [ "The Toffees", "Toffees" ]
+  },
+  {
+    "officialName": "Fulham",
+    "providerName": "Fulham",
+    "aliases": [ "The Cottagers", "Cottagers" ]
+  },
+  {
+    "officialName": "Ipswich Town",
+    "providerName": "Ipswich",
+    "aliases": [ "Ipswich", "The Tractor Boys", "Tractor Boys" ]
+  },
+  {
+    "officialName": "Leicester City",
+    "providerName": "Leicester",
+    "aliases": [ "Leicester", "The Foxes", "Foxes" ]
+  },
+  {
+    "officialName": "Liverpool",
+    "providerName": "Liverpool",
+    "aliases": [ "The Reds", "Reds" ]
+  },
+  {
+    "officialName": "Manchester City",
+    "providerName": "Manchester City",
+    "aliases": [ "Man City", "The Citizens", "Citizens" ]
+  },
+  {
+    "officialName": "Manchester United",
+    "providerName": "Manchester United",
+    "aliases": [ "Man United", "Man Utd", "The Red Devils", "Red Devils" ]
+  },
+  {
+    "officialName": "Newcastle United",
+    "providerName": "Newcastle",
+    "aliases": [ "Newcastle", "The Magpies", "Magpies" ]
+  },
+  {
+    "officialName": "Nottingham Forest",
+    "providerName": "Nottingham Forest",
+    "aliases": [ "Forest" ]
+  },
+  {
+    "officialName": "Southampton",
+    "providerName": "Southampton",
+    "aliases": [ "The Saints", "Saints" ]
+  },
+  {
+    "officialName": "Tottenham Hotspur",
+    "providerName": "Tottenham",
+    "aliases": [ "Tottenham", "Spurs" ]
+  },
+  {
+    "officialName": "West Ham United",
+    "providerName": "West Ham",
+    "aliases": [ "West Ham", "The Hammers", "Hammers" ]
+  },
+  {
+    "officialName": "Wolverhampton Wanderers",
+    "providerName": "Wolves",
+    "aliases": [ "Wolves", "Wolverhampton", "The Old Gold", "Old Gold" ]
+  }
+]
