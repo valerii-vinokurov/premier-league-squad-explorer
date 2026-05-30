@@ -9,7 +9,7 @@ public sealed class ApiFootballPlayersResponse
     public string? Get { get; init; }
 
     [JsonPropertyName("parameters")]
-    public Dictionary<string, string> Parameters { get; init; } = [];
+    public JsonElement Parameters { get; init; }
 
     [JsonPropertyName("errors")]
     public JsonElement Errors { get; init; }

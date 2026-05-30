@@ -35,15 +35,17 @@ builder.Services.AddSingleton<ITeamAliasProvider, JsonTeamAliasProvider>();
 builder.Services.AddScoped<ITeamResolverService, TeamResolverService>();
 builder.Services.AddScoped<ISquadService, SquadService>();
 
-var app = builder.Build();
+builder.Services.AddControllers();
 
-// Configure the HTTP request pipeline.
+var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 var summaries = new[]
 {
