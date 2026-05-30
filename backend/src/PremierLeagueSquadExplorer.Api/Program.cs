@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddOpenApi();
+builder.Services.AddMemoryCache();
 
 builder.Services
     .AddOptions<FootballApiOptions>()
@@ -30,7 +31,9 @@ builder.Services.AddHttpClient<IFootballApiClient, FootballApiClient>((servicePr
 });
 
 builder.Services.AddSingleton<ITeamAliasProvider, JsonTeamAliasProvider>();
+
 builder.Services.AddScoped<ITeamResolverService, TeamResolverService>();
+builder.Services.AddScoped<ISquadService, SquadService>();
 
 var app = builder.Build();
 

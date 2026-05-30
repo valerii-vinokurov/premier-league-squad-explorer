@@ -1,32 +1,65 @@
-﻿using PremierLeagueSquadExplorer.Api.Clients;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
+using PremierLeagueSquadExplorer.Api.Clients;
+using PremierLeagueSquadExplorer.Api.Constants;
 using PremierLeagueSquadExplorer.Api.Models.Dtos;
 using PremierLeagueSquadExplorer.Api.Models.External.Teams;
 using PremierLeagueSquadExplorer.Api.Models.TeamLookup;
+using PremierLeagueSquadExplorer.Api.Options;
 
 namespace PremierLeagueSquadExplorer.Api.Services;
 
 public sealed class TeamResolverService : ITeamResolverService
 {
+    private static readonly TimeSpan TeamsCacheDuration = TimeSpan.FromHours(12);
+
     private readonly IFootballApiClient _footballApiClient;
+    private readonly IMemoryCache _cache;
+    private readonly FootballApiOptions _footballApiOptions;
     private readonly IReadOnlyCollection<TeamAliasDefinition> _supportedTeams;
     private readonly IReadOnlyDictionary<string, TeamAliasDefinition> _teamLookup;
 
-    public TeamResolverService(IFootballApiClient footballApiClient, ITeamAliasProvider teamAliasProvider)
+    public TeamResolverService(
+        IFootballApiClient footballApiClient,
+        ITeamAliasProvider teamAliasProvider,
+        IMemoryCache cache,
+        IOptions<FootballApiOptions> footballApiOptions)
     {
         _footballApiClient = footballApiClient;
+        _cache = cache;
+        _footballApiOptions = footballApiOptions.Value;
         _supportedTeams = teamAliasProvider.GetSupportedTeams();
         _teamLookup = BuildTeamLookup(_supportedTeams);
     }
 
     public async Task<IReadOnlyCollection<TeamDto>> GetTeamsAsync(CancellationToken cancellationToken = default)
     {
-        var providerTeams = await _footballApiClient.GetPremierLeagueTeamsAsync(cancellationToken);
+        var providerTeams = await GetProviderTeamsAsync(cancellationToken);
         var providerTeamLookup = BuildProviderTeamLookup(providerTeams);
 
         return [.. _supportedTeams
             .Select(team => MapToTeamDto(team, providerTeamLookup))
             .Where(team => team is not null)
             .Cast<TeamDto>()];
+    }
+
+    private async Task<IReadOnlyCollection<ApiFootballTeamItem>> GetProviderTeamsAsync(
+        CancellationToken cancellationToken)
+    {
+        var cacheKey = CacheKeys.PremierLeagueTeams(
+            _footballApiOptions.LeagueId,
+            _footballApiOptions.Season);
+
+        var cachedTeams = await _cache.GetOrCreateAsync(cacheKey, async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TeamsCacheDuration;
+
+            var teams = await _footballApiClient.GetPremierLeagueTeamsAsync(cancellationToken);
+
+            return teams.ToArray();
+        });
+
+        return cachedTeams ?? [];
     }
 
     public async Task<TeamDto?> ResolveAsync(string query, CancellationToken cancellationToken = default)
@@ -45,7 +78,8 @@ public sealed class TeamResolverService : ITeamResolverService
         return MapToTeamDto(teamDefinition, providerTeamLookup);
     }
 
-    private static Dictionary<string, TeamAliasDefinition> BuildTeamLookup(IReadOnlyCollection<TeamAliasDefinition> supportedTeams)
+    private static Dictionary<string, TeamAliasDefinition> BuildTeamLookup(
+        IReadOnlyCollection<TeamAliasDefinition> supportedTeams)
     {
         var lookup = new Dictionary<string, TeamAliasDefinition>(StringComparer.Ordinal);
 
@@ -71,7 +105,8 @@ public sealed class TeamResolverService : ITeamResolverService
         return lookup;
     }
 
-    private static Dictionary<string, ApiFootballTeamItem> BuildProviderTeamLookup(IReadOnlyCollection<ApiFootballTeamItem> providerTeams)
+    private static Dictionary<string, ApiFootballTeamItem> BuildProviderTeamLookup(
+        IReadOnlyCollection<ApiFootballTeamItem> providerTeams)
         => providerTeams
             .Where(team => !string.IsNullOrWhiteSpace(team.Team.Name))
             .GroupBy(team => TeamNameNormalizer.Normalize(team.Team.Name))
@@ -80,7 +115,9 @@ public sealed class TeamResolverService : ITeamResolverService
                 group => group.First(),
                 StringComparer.Ordinal);
 
-    private static TeamDto? MapToTeamDto(TeamAliasDefinition teamDefinition, IReadOnlyDictionary<string, ApiFootballTeamItem> providerTeamLookup)
+    private static TeamDto? MapToTeamDto(
+        TeamAliasDefinition teamDefinition,
+        IReadOnlyDictionary<string, ApiFootballTeamItem> providerTeamLookup)
     {
         var normalizedProviderName = TeamNameNormalizer.Normalize(teamDefinition.ProviderName);
 
