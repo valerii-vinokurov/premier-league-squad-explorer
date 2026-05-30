@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
 using PremierLeagueSquadExplorer.Api.Clients;
 using PremierLeagueSquadExplorer.Api.Constants;
+using PremierLeagueSquadExplorer.Api.Middleware;
 using PremierLeagueSquadExplorer.Api.Options;
 using PremierLeagueSquadExplorer.Api.Services;
 
@@ -38,6 +39,9 @@ builder.Services.AddScoped<ISquadService, SquadService>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

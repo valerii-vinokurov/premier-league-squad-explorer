@@ -1,6 +1,6 @@
-﻿using System.Net.Http.Json;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.Extensions.Options;
+using PremierLeagueSquadExplorer.Api.Exceptions;
 using PremierLeagueSquadExplorer.Api.Models.External.Players;
 using PremierLeagueSquadExplorer.Api.Models.External.Teams;
 using PremierLeagueSquadExplorer.Api.Options;
@@ -76,14 +76,16 @@ public sealed class FootballApiClient(
         using var response = await _httpClient.GetAsync(requestUrl, cancellationToken);
 
         if (!response.IsSuccessStatusCode)
-            throw new InvalidOperationException($"Football API request failed with status code {(int)response.StatusCode}.");
+            throw new FootballApiException(
+                $"Football API request failed with status code {(int)response.StatusCode}.",
+                response.StatusCode);
 
         var result = await response.Content.ReadFromJsonAsync<TResponse>(
             JsonOptions,
             cancellationToken);
 
         if (result is null)
-            throw new InvalidOperationException("Football API returned an empty response.");
+            throw new FootballApiException("Football API returned an empty response.");
 
         ValidateProviderErrors(getErrors(result));
 
@@ -93,7 +95,7 @@ public sealed class FootballApiClient(
     private static void ValidateProviderErrors(JsonElement errors)
     {
         if (HasProviderErrors(errors))
-            throw new InvalidOperationException("Football API returned provider errors.");
+            throw new FootballApiException("Football API returned provider errors.");
     }
 
     private static bool HasProviderErrors(JsonElement errors)

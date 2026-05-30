@@ -17,6 +17,6 @@ public sealed class TeamsController(ITeamResolverService teamResolverService) : 
     {
         var teams = await _teamResolverService.GetTeamsAsync(cancellationToken);
 
-        return Ok(teams);
+        return Ok(teams ?? []);
     }
 }

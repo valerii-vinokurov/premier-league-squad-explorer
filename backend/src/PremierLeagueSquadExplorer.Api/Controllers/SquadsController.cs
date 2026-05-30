@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PremierLeagueSquadExplorer.Api.Constants;
 using PremierLeagueSquadExplorer.Api.Models.Dtos;
 using PremierLeagueSquadExplorer.Api.Services;
 
@@ -22,7 +23,7 @@ public sealed class SquadsController(ISquadService squadService) : ControllerBas
         {
             return BadRequest(new ErrorResponseDto
             {
-                Code = "INVALID_QUERY",
+                Code = ErrorCodes.InvalidQuery,
                 Message = "Team name or nickname is required."
             });
         }
@@ -33,7 +34,7 @@ public sealed class SquadsController(ISquadService squadService) : ControllerBas
         {
             return NotFound(new ErrorResponseDto
             {
-                Code = "TEAM_NOT_FOUND",
+                Code = ErrorCodes.TeamNotFound,
                 Message = "The requested team could not be found."
             });
         }
