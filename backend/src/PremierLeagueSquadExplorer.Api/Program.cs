@@ -1,3 +1,6 @@
+using Microsoft.Extensions.Options;
+using PremierLeagueSquadExplorer.Api.Clients;
+using PremierLeagueSquadExplorer.Api.Constants;
 using PremierLeagueSquadExplorer.Api.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +17,16 @@ builder.Services
     .Validate(options => options.Season > 0, "Football API season is required.")
     .Validate(options => !string.IsNullOrWhiteSpace(options.ApiKey), "Football API key is required.")
     .ValidateOnStart();
+
+builder.Services.AddHttpClient<IFootballApiClient, FootballApiClient>((serviceProvider, httpClient) =>
+{
+    var options = serviceProvider
+        .GetRequiredService<IOptions<FootballApiOptions>>()
+        .Value;
+
+    httpClient.BaseAddress = new Uri(options.BaseUrl);
+    httpClient.DefaultRequestHeaders.Add(FootballApiHeaders.ApiKey, options.ApiKey);
+});
 
 var app = builder.Build();
 
