@@ -123,6 +123,7 @@
 
 .player-card {
   height: 100%;
+  min-height: 280px;
   transition:
     transform 180ms ease,
     box-shadow 180ms ease,
@@ -133,6 +134,18 @@
   transform: translateY(-4px);
   border-color: rgba(79, 70, 229, 0.22);
   box-shadow: var(--app-shadow-hover);
+}
+
+.player-name {
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.25;
+}
+
+.player-short-name {
+  min-height: 1.25rem;
 }
 
 .player-photo {

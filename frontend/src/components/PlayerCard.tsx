@@ -27,11 +27,13 @@ export function PlayerCard({ player }: PlayerCardProps) {
         </div>
       )}
 
-      <h3 className="h5 fw-bold mb-1">{displayName}</h3>
+      <h3 className="h5 fw-bold mb-1 player-name">{displayName}</h3>
 
-      {player.displayName && player.displayName !== displayName && (
-        <p className="text-muted-soft small mb-3">{player.displayName}</p>
-      )}
+      <div className="player-short-name text-muted-soft small mb-3">
+        {player.displayName && player.displayName !== displayName
+          ? player.displayName
+          : "\u00A0"}
+      </div>
 
       <div className="d-grid gap-2 text-start mt-3">
         <div className="player-meta-row">
