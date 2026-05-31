@@ -11,6 +11,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddMemoryCache();
 
+var allowedOrigins = builder.Configuration
+    .GetSection("Frontend:AllowedOrigins")
+    .Get<string[]>() ?? [];
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(CorsPolicyNames.FrontendDevelopment, policy =>
+    {
+        policy
+            .WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services
     .AddOptions<FootballApiOptions>()
     .Bind(builder.Configuration.GetSection(FootballApiOptions.SectionName))
@@ -53,6 +68,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(CorsPolicyNames.FrontendDevelopment);
 
 app.MapControllers();
 
