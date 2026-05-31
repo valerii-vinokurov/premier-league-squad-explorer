@@ -1,3 +1,4 @@
+import { appConfig } from "../config/appConfig";
 import type {
   ErrorResponseDto,
   PlayerDto,
@@ -6,48 +7,61 @@ import type {
 } from "../models/squad";
 import { decodeHtml, decodeHtmlOrNull } from "../utils/text";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? "https://localhost:7082";
-
-async function getJson<T>(url: string): Promise<T> {
-  const response = await fetch(url);
+async function getJson<T>(path: string): Promise<T> {
+  const response = await fetch(`${appConfig.apiBaseUrl}${path}`);
 
   if (!response.ok) {
-    let errorMessage = "Request failed. Please try again.";
-    let errorCode = "REQUEST_FAILED";
+    const error = await readErrorResponse(response);
 
-    try {
-      const error = (await response.json()) as Partial<ErrorResponseDto>;
-
-      if (error.message) {
-        errorMessage = error.message;
-      }
-
-      if (error.code) {
-        errorCode = error.code;
-      }
-    } catch {
-      // If the backend does not return JSON, keep the default user-friendly message.
-    }
-
-    throw new ApiError(errorMessage, response.status, errorCode);
+    throw new ApiError(error.message, response.status, error.code);
   }
 
   return response.json() as Promise<T>;
 }
 
+async function readErrorResponse(
+  response: Response,
+): Promise<ErrorResponseDto> {
+  const fallbackError: ErrorResponseDto = {
+    code: "REQUEST_FAILED",
+    message: `Request failed with status ${response.status}.`,
+  };
+
+  const contentType = response.headers.get("content-type") ?? "";
+
+  if (!contentType.includes("application/json")) {
+    return fallbackError;
+  }
+
+  try {
+    const error = (await response.json()) as Partial<ErrorResponseDto>;
+
+    return {
+      code: error.code?.trim() || fallbackError.code,
+      message: error.message?.trim() || fallbackError.message,
+    };
+  } catch (exception) {
+    console.warn("Failed to parse backend error response.", exception);
+
+    return {
+      code: "INVALID_ERROR_RESPONSE",
+      message: fallbackError.message,
+    };
+  }
+}
+
 export async function getTeams(): Promise<TeamDto[]> {
-  const teams = await getJson<TeamDto[]>(`${API_BASE_URL}/api/teams`);
+  const teams = await getJson<TeamDto[]>("/api/teams");
 
   return teams.map(normalizeTeam);
 }
 
 export async function getSquad(query: string): Promise<SquadDto> {
-  const encodedQuery = encodeURIComponent(query.trim());
+  const params = new URLSearchParams({
+    query: query.trim(),
+  });
 
-  const squad = await getJson<SquadDto>(
-    `${API_BASE_URL}/api/squads?query=${encodedQuery}`,
-  );
+  const squad = await getJson<SquadDto>(`/api/squads?${params.toString()}`);
 
   return normalizeSquad(squad);
 }
