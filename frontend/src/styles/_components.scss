@@ -232,23 +232,22 @@
   .input-group.input-group-lg {
     flex-direction: column;
 
-    .input-group-text,
+    .input-group-text {
+      display: none;
+    }
+
     .form-control,
     .btn {
       width: 100%;
       border-radius: 0.75rem !important;
     }
 
-    .input-group-text {
-      justify-content: center;
-    }
-
     .form-control {
-      margin-top: 0.5rem;
+      margin-top: 0;
     }
 
     .btn {
-      margin-top: 0.5rem;
+      margin-top: 0.75rem;
     }
   }
 }
