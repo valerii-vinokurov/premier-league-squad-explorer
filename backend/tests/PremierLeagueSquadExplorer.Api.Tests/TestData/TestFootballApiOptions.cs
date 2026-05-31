@@ -11,6 +11,7 @@ internal static class TestFootballApiOptions
             BaseUrl = "https://example.test",
             ApiKey = "test-key",
             LeagueId = 39,
-            Season = 2024
+            Season = 2024,
+            MaxPlayerPages = 3
         });
 }

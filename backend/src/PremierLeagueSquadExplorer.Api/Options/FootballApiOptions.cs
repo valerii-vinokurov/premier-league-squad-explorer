@@ -11,4 +11,7 @@ public sealed class FootballApiOptions
     public int LeagueId { get; set; } = 39;
 
     public int Season { get; set; } = 2024;
+
+    // Free plan limits
+    public int MaxPlayerPages { get; set; } = 3;
 }
