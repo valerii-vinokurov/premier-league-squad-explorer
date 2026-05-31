@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  backend:
+    name: Back-end restore, build and test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Restore back-end dependencies
+        run: dotnet restore
+
+      - name: Build back-end
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run back-end tests
+        run: dotnet test --configuration Release --no-build
+
+  frontend:
+    name: Front-end install and build
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install front-end dependencies
+        run: npm ci
+
+      - name: Build front-end
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: https://localhost:7082
