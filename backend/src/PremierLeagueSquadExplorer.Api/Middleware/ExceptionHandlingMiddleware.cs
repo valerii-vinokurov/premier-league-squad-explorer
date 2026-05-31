@@ -51,14 +51,13 @@ public sealed class ExceptionHandlingMiddleware(
         }
     }
 
-    private async Task HandleFootballApiExceptionAsync(
-        HttpContext context,
-        FootballApiException exception)
+    private async Task HandleFootballApiExceptionAsync(HttpContext context, FootballApiException exception)
     {
         _logger.LogError(
             exception,
-            "Football API request failed. Provider status code: {StatusCode}",
-            exception.StatusCode);
+            "Football API request failed. Provider status code: {StatusCode}. Provider errors: {ProviderErrors}",
+            exception.StatusCode,
+            exception.ProviderErrors);
 
         if (exception.StatusCode == HttpStatusCode.TooManyRequests)
         {

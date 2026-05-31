@@ -94,8 +94,14 @@ public sealed class FootballApiClient(
 
     private static void ValidateProviderErrors(JsonElement errors)
     {
-        if (HasProviderErrors(errors))
-            throw new FootballApiException("Football API returned provider errors.");
+        if (!HasProviderErrors(errors))
+            return;
+
+        var providerErrors = errors.GetRawText();
+
+        throw new FootballApiException(
+            "Football API returned provider errors.",
+            providerErrors: providerErrors);
     }
 
     private static bool HasProviderErrors(JsonElement errors)
