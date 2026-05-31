@@ -12,8 +12,7 @@ public sealed class TeamsController(ITeamResolverService teamResolverService) : 
 
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyCollection<TeamDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IReadOnlyCollection<TeamDto>>> GetTeamsAsync(
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<IReadOnlyCollection<TeamDto>>> GetTeamsAsync(CancellationToken cancellationToken)
     {
         var teams = await _teamResolverService.GetTeamsAsync(cancellationToken);
 
