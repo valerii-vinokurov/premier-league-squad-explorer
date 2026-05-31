@@ -42,8 +42,9 @@ public sealed class FootballApiClient(
         players.AddRange(firstPage.Response);
 
         var totalPages = Math.Max(firstPage.Paging.Total, FirstPage);
+        var pagesToLoad = Math.Min(totalPages, _options.MaxPlayerPages);
 
-        for (var page = FirstPage + 1; page <= totalPages; page++)
+        for (var page = FirstPage + 1; page <= pagesToLoad; page++)
         {
             var nextPage = await GetPlayersPageAsync(teamId, page, cancellationToken);
             players.AddRange(nextPage.Response);

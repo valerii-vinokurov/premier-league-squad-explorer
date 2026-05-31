@@ -33,6 +33,7 @@ builder.Services
     .Validate(options => Uri.TryCreate(options.BaseUrl, UriKind.Absolute, out _), "Football API base URL must be valid.")
     .Validate(options => options.LeagueId > 0, "Football API league ID is required.")
     .Validate(options => options.Season > 0, "Football API season is required.")
+    .Validate(options => options.MaxPlayerPages > 0, "Football API max player pages must be greater than zero.")
     .Validate(options => !string.IsNullOrWhiteSpace(options.ApiKey), "Football API key is required.")
     .ValidateOnStart();
 
