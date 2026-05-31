@@ -1,4 +1,10 @@
-import type { ErrorResponseDto, SquadDto, TeamDto } from "../models/squad";
+import type {
+  ErrorResponseDto,
+  PlayerDto,
+  SquadDto,
+  TeamDto,
+} from "../models/squad";
+import { decodeHtml, decodeHtmlOrNull } from "../utils/text";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "https://localhost:7082";
@@ -31,13 +37,45 @@ async function getJson<T>(url: string): Promise<T> {
 }
 
 export async function getTeams(): Promise<TeamDto[]> {
-  return getJson<TeamDto[]>(`${API_BASE_URL}/api/teams`);
+  const teams = await getJson<TeamDto[]>(`${API_BASE_URL}/api/teams`);
+
+  return teams.map(normalizeTeam);
 }
 
 export async function getSquad(query: string): Promise<SquadDto> {
   const encodedQuery = encodeURIComponent(query.trim());
 
-  return getJson<SquadDto>(`${API_BASE_URL}/api/squads?query=${encodedQuery}`);
+  const squad = await getJson<SquadDto>(
+    `${API_BASE_URL}/api/squads?query=${encodedQuery}`,
+  );
+
+  return normalizeSquad(squad);
+}
+
+function normalizeSquad(squad: SquadDto): SquadDto {
+  return {
+    ...squad,
+    team: normalizeTeam(squad.team),
+    players: squad.players.map(normalizePlayer),
+  };
+}
+
+function normalizeTeam(team: TeamDto): TeamDto {
+  return {
+    ...team,
+    name: decodeHtml(team.name).trim(),
+    providerName: decodeHtmlOrNull(team.providerName),
+  };
+}
+
+function normalizePlayer(player: PlayerDto): PlayerDto {
+  return {
+    ...player,
+    firstName: decodeHtml(player.firstName).trim(),
+    surname: decodeHtml(player.surname).trim(),
+    displayName: decodeHtml(player.displayName).trim(),
+    position: decodeHtmlOrNull(player.position),
+  };
 }
 
 export class ApiError extends Error {
