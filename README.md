@@ -31,6 +31,10 @@ The application consists of:
 - Provide Swagger/OpenAPI documentation for the back-end.
 - Validate the project through GitHub Actions.
 
+## Application Preview
+
+![Application Preview](docs/images/application-preview.png)
+
 ## Tech Stack
 
 ### Back-end
@@ -99,7 +103,7 @@ frontend/
 
 The React front-end communicates only with the ASP.NET Core back-end.
 
-![alt text](High-Level%20Architecture.png)
+![Architecture Overview](docs/images/architecture-overview.png)
 
 The API key is kept on the back-end and is never exposed to the front-end.
 
